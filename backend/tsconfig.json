@@ -1,0 +1,23 @@
+{
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
+  },
+  "compilerOptions": {
+    "module": "NodeNext",
+    "outDir": "build",
+    "typeRoots": ["node_modules/@types"],
+    "baseUrl": ".",
+    "paths": {
+      "@adapters/*": ["adapters/*"],
+      "@application/*": ["application/*"],
+      "@config/*": ["config/*"],
+      "@frameworks/*": ["frameworks/*"],
+      "@src/*": ["src/*"]
+    },
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "sourceMap": true
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules", "dist", "build"]
+}
