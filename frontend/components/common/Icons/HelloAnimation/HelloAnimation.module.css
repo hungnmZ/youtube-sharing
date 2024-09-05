@@ -1,0 +1,292 @@
+.helloParent {
+  margin: 0;
+}
+
+.helloParent {
+  display: flex;
+}
+
+.helloWord {
+  margin-inline: auto;
+}
+/* H Animation */
+
+.hLeftStroke {
+  stroke-dasharray: 124px;
+  stroke-dashoffset: 124px;
+  animation: hLeftMove 20s ease forwards;
+}
+
+.hMidStroke {
+  stroke-dasharray: 37px;
+  stroke-dashoffset: 37px;
+  animation: hMidMove 9s ease forwards;
+}
+
+.hRightStroke {
+  stroke-dasharray: 124px;
+  stroke-dashoffset: 124px;
+  animation: hRightMove 13s ease forwards;
+}
+
+@keyframes hLeftMove {
+  0% {
+    stroke-dashoffset: 124px;
+  }
+  5% {
+    stroke-dashoffset: 0px;
+  }
+  100% {
+    stroke-dashoffset: 0px;
+  }
+}
+
+@keyframes hMidMove {
+  0% {
+    stroke-dashoffset: 37px;
+  }
+  5% {
+    stroke-dashoffset: 37px;
+  }
+  10% {
+    stroke-dashoffset: 0px;
+  }
+  100% {
+    stroke-dashoffset: 0px;
+  }
+}
+
+@keyframes hRightMove {
+  0% {
+    stroke-dashoffset: 124px;
+  }
+  5% {
+    stroke-dashoffset: 124px;
+  }
+  10% {
+    stroke-dashoffset: 0px;
+  }
+  100% {
+    stroke-dashoffset: 0px;
+  }
+}
+
+/* E Animation */
+
+.eLeftStroke {
+  stroke-dasharray: 124px;
+  stroke-dashoffset: 124px;
+  animation: eLeftMove 20s ease forwards;
+}
+
+.eTopStroke {
+  stroke-dasharray: 47px;
+  stroke-dashoffset: 47px;
+  animation: eTopMove 10s ease forwards;
+}
+
+.eMidStroke {
+  stroke-dasharray: 42px;
+  stroke-dashoffset: 42px;
+  animation: eMidMove 10s ease forwards;
+}
+
+.eBottomStroke {
+  stroke-dasharray: 47px;
+  stroke-dashoffset: 47px;
+  animation: eBottomMove 10s ease forwards;
+}
+
+@keyframes eLeftMove {
+  0% {
+    stroke-dashoffset: 124px;
+  }
+  2% {
+    stroke-dashoffset: 124px;
+  }
+  6% {
+    stroke-dashoffset: 0px;
+  }
+  100% {
+    stroke-dashoffset: 0px;
+  }
+}
+
+@keyframes eTopMove {
+  0% {
+    stroke-dashoffset: 47px;
+  }
+  6% {
+    stroke-dashoffset: 47px;
+  }
+  11% {
+    stroke-dashoffset: 0px;
+  }
+  100% {
+    stroke-dashoffset: 0px;
+  }
+}
+
+@keyframes eMidMove {
+  0% {
+    stroke-dashoffset: 42px;
+  }
+  8% {
+    stroke-dashoffset: 42px;
+  }
+  13% {
+    stroke-dashoffset: 0px;
+  }
+  100% {
+    stroke-dashoffset: 0px;
+  }
+}
+
+@keyframes eBottomMove {
+  0% {
+    stroke-dashoffset: 47px;
+  }
+  11% {
+    stroke-dashoffset: 47px;
+  }
+  16% {
+    stroke-dashoffset: 0px;
+  }
+  100% {
+    stroke-dashoffset: 0px;
+  }
+}
+
+/* L One Animation */
+
+.lOneLongStroke {
+  stroke-dasharray: 124px;
+  stroke-dashoffset: 124px;
+  animation: lOneLongMove 20s ease forwards;
+}
+
+.lOneShortStroke {
+  stroke-dasharray: 44px;
+  stroke-dashoffset: 44px;
+  animation: lOneShortMove 10s ease forwards;
+}
+
+@keyframes lOneLongMove {
+  0% {
+    stroke-dashoffset: 124px;
+  }
+  2% {
+    stroke-dashoffset: 124px;
+  }
+  7% {
+    stroke-dashoffset: 0px;
+  }
+  100% {
+    stroke-dashoffset: 0px;
+  }
+}
+
+@keyframes lOneShortMove {
+  0% {
+    stroke-dashoffset: 44px;
+  }
+  13% {
+    stroke-dashoffset: 44px;
+  }
+  18% {
+    stroke-dashoffset: 0px;
+  }
+  100% {
+    stroke-dashoffset: 0px;
+  }
+}
+
+/* L Two Animation */
+
+.lTwoLongStroke {
+  stroke-dasharray: 124px;
+  stroke-dashoffset: 124px;
+  animation: lTwoLongMove 20s ease forwards;
+}
+
+.lTwoShortStroke {
+  stroke-dasharray: 44px;
+  stroke-dashoffset: 44px;
+  animation: lTwoShortMove 10s ease forwards;
+}
+
+@keyframes lTwoLongMove {
+  0% {
+    stroke-dashoffset: 124px;
+  }
+  3% {
+    stroke-dashoffset: 124px;
+  }
+  8% {
+    stroke-dashoffset: 0px;
+  }
+  100% {
+    stroke-dashoffset: 0px;
+  }
+}
+
+@keyframes lTwoShortMove {
+  0% {
+    stroke-dashoffset: 44px;
+  }
+  15% {
+    stroke-dashoffset: 44px;
+  }
+  20% {
+    stroke-dashoffset: 0px;
+  }
+  100% {
+    stroke-dashoffset: 0px;
+  }
+}
+
+/* O Animation */
+
+.oStroke {
+  stroke-dasharray: 302px;
+  stroke-dashoffset: 302px;
+  animation: oMove 20s ease forwards;
+}
+
+@keyframes oMove {
+  0% {
+    stroke-dashoffset: 302px;
+  }
+  4% {
+    stroke-dashoffset: 302px;
+  }
+  9% {
+    stroke-dashoffset: 0px;
+  }
+  100% {
+    stroke-dashoffset: 0px;
+  }
+}
+
+/* Red Dot Animation */
+
+.redDot {
+  stroke-width: 44px;
+  stroke-linecap: round;
+  animation: redDotGrow 8s ease-out forwards;
+}
+
+@keyframes redDotGrow {
+  0% {
+    stroke-width: 0px;
+  }
+  15% {
+    stroke-width: 0px;
+  }
+  20% {
+    stroke-width: 44px;
+  }
+  100% {
+    stroke-width: 44px;
+  }
+}

@@ -9,7 +9,7 @@ const ThemeProvider: React.FC<ThemeProviderProps> = ({ children, ...props }) => 
     <NextThemesProvider
       attribute='class'
       defaultTheme='system'
-      storageKey='movie-nonstop-theme'
+      storageKey='youtube-sharing-theme'
       enableSystem
       disableTransitionOnChange
       {...props}

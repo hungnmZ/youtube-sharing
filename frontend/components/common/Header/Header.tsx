@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import DarkModeToggle from '@/components/common/DarkModeToggle';
+import { Button } from '@/components/ui/button';
 
 const Header = () => {
   return (
@@ -27,6 +28,11 @@ const Header = () => {
           </Link>
         </div>
         <div className='flex flex-1 justify-end gap-5'>
+          <Link href='/share'>
+            <Button variant='outline' size='sm' className='gap-1'>
+              Share a video
+            </Button>
+          </Link>
           <DarkModeToggle />
           <UserButton />
         </div>

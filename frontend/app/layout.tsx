@@ -13,8 +13,8 @@ const fontSans = FontSans({
 });
 
 export const metadata: Metadata = {
-  title: 'MovieNonstop',
-  description: 'Your movies ready for a nonstop movie marathon!',
+  title: 'YouTube Sharing',
+  description: 'Share YouTube videos with your friends and family.',
 };
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
@@ -23,7 +23,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
       <html lang='en' suppressHydrationWarning>
         <body
           className={cn(
-            'min-h-screen bg-background font-sans antialiased',
+            'min-h-dvh bg-background font-sans antialiased',
             fontSans.variable,
           )}
         >
