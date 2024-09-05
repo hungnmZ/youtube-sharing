@@ -2,7 +2,7 @@ import { ResourceRepo } from '@frameworks/database/mongodb/repositories/resource
 import { ResourceController } from '@frameworks/webserver/controllers/resource.controller';
 import { Router } from 'express';
 
-import { asyncHandler } from '../middlewares/async.middleware';
+import { asyncAuthHandler } from '../middlewares/auth.middleware';
 import { ResourceService } from '../services/resource.service';
 
 export const resourceRouter = (): Router => {
@@ -13,14 +13,14 @@ export const resourceRouter = (): Router => {
 
   router
     .route('/')
-    .post(asyncHandler(controller.create))
-    .get(asyncHandler(controller.getAll));
+    .get(asyncAuthHandler(controller.getAll))
+    .post(asyncAuthHandler(controller.create));
 
   router
     .route('/:id')
-    .get(asyncHandler(controller.getById))
-    .put(asyncHandler(controller.update))
-    .delete(asyncHandler(controller.delete));
+    .get(asyncAuthHandler(controller.getById))
+    .put(asyncAuthHandler(controller.update))
+    .delete(asyncAuthHandler(controller.delete));
 
   return router;
 };

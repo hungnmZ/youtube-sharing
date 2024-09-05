@@ -4,6 +4,6 @@ type RouterHandler = (req: Request, res: Response, next: NextFunction) => Promis
 
 export const asyncHandler = (fn: RouterHandler) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    Promise.resolve(fn(req, res, next)).catch((err) => next(err));
+    fn(req, res, next).catch((err) => next(err));
   };
 };
