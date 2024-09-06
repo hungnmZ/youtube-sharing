@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import { expressConfig } from '@config/express.config';
-import { connectMongoDB } from '@frameworks/database/mongodb/connection';
+import { initMongoDB } from '@frameworks/database/mongodb/connection';
 import {
   is404Handler,
   returnError,
@@ -10,7 +10,7 @@ import {
 import express from 'express';
 
 // Connect database
-connectMongoDB();
+initMongoDB();
 
 const app = express();
 
