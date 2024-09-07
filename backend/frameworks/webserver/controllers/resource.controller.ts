@@ -1,52 +1,43 @@
 import { IResourceService } from '@application/services/IResource.serice';
-import { IResourceSchema } from '@frameworks/database/mongodb/models/resource.model';
-import { CREATED, OK } from '@frameworks/webserver/utils/response/success.response';
-import { validate } from 'class-validator';
-import { Request, Response } from 'express';
+import { OK } from '@frameworks/webserver/utils/response/success.response';
+import { Response } from 'express';
+import { AuthenticatedRequest } from 'types/request';
 
-import { CreateResourceDTO } from '../dtos/resource/createResource.dto';
-import { UpdateResourceDTO } from '../dtos/resource/updateResource.dto';
+import { ShareResourceDTO } from '../dtos/resource/shareResource.dto';
+import { extractVideoId } from '../helpers/resource.helper';
+import { SocketService } from '../services/socket.service';
 import { Api400Error } from '../utils/response/error.response';
 
 export class ResourceController {
-  constructor(private resourceService: IResourceService) {
+  constructor(
+    private resourceService: IResourceService,
+    private socketService: SocketService,
+  ) {
     this.resourceService = resourceService;
+    this.socketService = socketService;
   }
 
-  create = async (req: Request, res: Response) => {
-    const resourceDTO = new CreateResourceDTO(req.body as CreateResourceDTO);
-    const validation = await validate(resourceDTO);
+  share = async (req: AuthenticatedRequest, res: Response) => {
+    const shareDTO = new ShareResourceDTO(req.body as ShareResourceDTO);
+    const videoId = extractVideoId(shareDTO.url);
+    const { userId } = req.auth;
 
-    if (validation.length > 0) {
-      throw new Api400Error('Invalid data', validation);
+    if (!videoId) {
+      throw new Api400Error('Please enter a valid YouTube video URL');
     }
 
-    const resource: IResourceSchema = { ...resourceDTO };
-    CREATED({ res, data: await this.resourceService.create(resource) });
-  };
+    const videoInfo = await this.resourceService.share(videoId, userId);
+    this.socketService.emitEvent(
+      'resource:shared',
+      JSON.stringify({
+        title: videoInfo.title,
+        channelTitle: videoInfo.channelTitle,
+        thumbnails: videoInfo.thumbnails,
+        userId,
+        userName: videoInfo.sharedBy.userName,
+      }),
+    );
 
-  getAll = async (req: Request, res: Response) => {
-    OK({ res, data: await this.resourceService.getAll() });
-  };
-
-  getById = async (req: Request, res: Response) => {
-    OK({ res, data: await this.resourceService.getById(req.params.id) });
-  };
-
-  update = async (req: Request, res: Response) => {
-    const resourceDTO = new UpdateResourceDTO(req.body as UpdateResourceDTO);
-    const validation = await validate(resourceDTO);
-
-    if (validation.length > 0) {
-      throw new Api400Error('Invalid data', validation);
-    }
-    const resource: IResourceSchema = { ...resourceDTO };
-    OK({ res, data: await this.resourceService.update(req.params.id, resource) });
-  };
-
-  delete = async (req: Request, res: Response) => {
-    await this.resourceService.delete(req.params.id);
-
-    OK({ res });
+    OK({ res, data: videoInfo });
   };
 }

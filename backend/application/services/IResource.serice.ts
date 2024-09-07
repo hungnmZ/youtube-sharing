@@ -2,4 +2,6 @@ import { IResourceSchema } from '@frameworks/database/mongodb/models/resource.mo
 
 import { IBaseService } from './IBase.service';
 
-export interface IResourceService extends IBaseService<IResourceSchema> {}
+export interface IResourceService extends IBaseService<IResourceSchema> {
+  share(videoId: string, userId: string): Promise<IResourceSchema>;
+}

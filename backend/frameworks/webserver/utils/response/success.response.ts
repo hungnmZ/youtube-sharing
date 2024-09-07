@@ -1,16 +1,6 @@
 import { Response } from 'express';
 import { ReasonPhrases, StatusCodes } from 'http-status-codes';
-
-interface ISuccessResponse {
-  send(res: Response, headers: object): Response;
-}
-
-interface IResponse {
-  message?: ReasonPhrases;
-  data?: object;
-  headers?: object;
-  res?: Response;
-}
+import { IResponse, ISuccessResponse } from 'types/respone';
 
 class SuccessResponse implements ISuccessResponse {
   private message: string;

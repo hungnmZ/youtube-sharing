@@ -20,7 +20,7 @@ export abstract class BaseRepo<Schema extends IBaseSchema> implements IBaseRepo<
     return this.model.findById(id);
   }
 
-  async update(id: string, doc: Schema): Promise<Schema> {
+  async update(id: string, doc: Partial<Schema>): Promise<Schema> {
     return this.model.findByIdAndUpdate(id, { $set: doc }, { new: true });
   }
 

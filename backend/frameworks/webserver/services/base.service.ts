@@ -18,7 +18,7 @@ export abstract class BaseServices<Schema extends IBaseSchema>
     const response = await this.repo.getById(id);
     return response;
   }
-  async update(id: string, Schema: Schema): Promise<Schema> {
+  async update(id: string, Schema: Partial<Schema>): Promise<Schema> {
     const response = await this.repo.update(id, Schema);
     return response;
   }
