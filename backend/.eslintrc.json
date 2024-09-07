@@ -27,6 +27,13 @@
         "args": "after-used",
         "argsIgnorePattern": "^_"
       }
+    ],
+    "@typescript-eslint/prefer-destructuring": [
+      "error",
+      {
+        "object": true,
+        "array": false
+      }
     ]
   },
   "overrides": [

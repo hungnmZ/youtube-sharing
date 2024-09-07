@@ -3,9 +3,8 @@ export const ENV_CONFIG = {
   IP: process.env.HOST || '0.0.0.0',
   MONGO: {
     URI: process.env.MONGO_URL || 'mongodb://localhost:27017',
-    RECONNECT_INTERVAL: 10000,
+    RECONNECT_INTERVAL: Number(process.env.MONGO_RECONNECT_INTERVAL) || 3000,
   },
-  REDIS: {
-    URI: process.env.REDIS_URL || 'redis://localhost:6379',
-  },
+  FRONTEND_URL: process.env.FRONTEND_URL || 'http://localhost:3006',
+  ORIGIN: process.env.ORIGIN?.split(',') || ['http://localhost:3006'],
 };

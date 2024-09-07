@@ -4,23 +4,15 @@ import { Router } from 'express';
 
 import { asyncAuthHandler } from '../middlewares/auth.middleware';
 import { ResourceService } from '../services/resource.service';
+import { SocketService } from '../services/socket.service';
 
-export const resourceRouter = (): Router => {
+export const resourceRouter = (socketService: SocketService): Router => {
   const router = Router();
   const resourceRepo = new ResourceRepo();
   const resourceService = new ResourceService(resourceRepo);
-  const controller = new ResourceController(resourceService);
+  const controller = new ResourceController(resourceService, socketService);
 
-  router
-    .route('/')
-    .get(asyncAuthHandler(controller.getAll))
-    .post(asyncAuthHandler(controller.create));
-
-  router
-    .route('/:id')
-    .get(asyncAuthHandler(controller.getById))
-    .put(asyncAuthHandler(controller.update))
-    .delete(asyncAuthHandler(controller.delete));
+  router.route('/share').post(asyncAuthHandler(controller.share));
 
   return router;
 };

@@ -1,76 +1,67 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextFunction, Request, Response } from 'express';
+import { CastError } from 'mongoose';
+import { DuplicateError, ValidationError } from 'types/error';
 
 import {
-  Api401Error,
-  Api403Error,
   Api404Error,
   BaseError,
   BusinessLogicError,
 } from '../utils/response/error.response';
 
-// Define a type for the error handling functions
-type ErrorHandlerFunction = (
-  err: unknown,
-) => BaseError | Api401Error | Api403Error | BusinessLogicError;
-
-const is404Handler = (req: Request, res: Response, next: NextFunction): void => {
-  const err = new Api404Error('Not found');
-  next(err);
+// 404 Not Found handler
+const handle404Error = (req: Request, res: Response, next: NextFunction): void => {
+  next(new Api404Error('Not found'));
 };
 
-const errorHandler = (
+// Main error handler
+const handleError = (
   err: unknown,
   req: Request,
   res: Response,
   _: NextFunction,
 ): Response => {
-  const statusCode = err instanceof BaseError ? err.status : 500;
-  let error: BaseError;
-
-  if (err instanceof BaseError) {
-    error = { ...err, message: err.message };
-  } else if (err instanceof Error) {
-    if (err.name === 'CastError') error = handleCastErrorDB(err);
-    if ((err as any).code === 11000) error = handleDuplicateFieldsDB(err);
-    if (err.name === 'ValidationError') error = handleValidationErrorDB(err);
-  }
+  const error = normalizeError(err);
+  const statusCode = error.status || 500;
 
   return res.status(statusCode).json({
     status: statusCode,
-    message: error.message || 'Internal Server Error',
-    errors: (err as any).errors,
-    stack: process.env.NODE_ENV === 'development' ? (err as any).stack : '',
+    message: error?.message || 'Internal Server Error',
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    errors: error.errors,
+    stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
   });
 };
 
-// Error Database
-const handleCastErrorDB: ErrorHandlerFunction = (err: unknown): BusinessLogicError => {
-  const castError = err as { path: string; value: string };
-  const message = `Invalid ${castError.path}: ${castError.value}`;
-  return new BusinessLogicError(message);
-};
+// Normalize different error types
+function normalizeError(err: unknown): BaseError {
+  if (err instanceof BaseError) {
+    return err;
+  }
+  if (err instanceof Error) {
+    if (err.name === 'CastError') return handleCastError(err as CastError);
+    if ('code' in err && err.code === 11000)
+      return handleDuplicateFieldsError(err as DuplicateError);
+    if (err.name === 'ValidationError')
+      return handleValidationError(err as ValidationError);
+  }
+  return new BusinessLogicError('An unexpected error occurred');
+}
 
-const handleDuplicateFieldsDB: ErrorHandlerFunction = (
-  err: unknown,
-): BusinessLogicError => {
-  const duplicateError = err as { errmsg: string };
-  const value = duplicateError.errmsg.match(/(["'])(\\?.)*?\1/)?.[0];
-  console.log(value);
-  const message = `Duplicate field value: ${value}. Please use another value`;
-  return new BusinessLogicError(message);
-};
+// Handle specific error types
+function handleCastError(err: CastError): BusinessLogicError {
+  return new BusinessLogicError(`Invalid ${err.path}: ${err.value}`);
+}
 
-const handleValidationErrorDB: ErrorHandlerFunction = (
-  err: unknown,
-): BusinessLogicError => {
-  const validationError = err as { errors: Record<string, { message: string }> };
-  const errors = Object.values(validationError.errors).map((el) => el.message);
-  console.log(errors);
-  const message = `Invalid input data. ${errors.join('. ')}`;
-  return new BusinessLogicError(message);
-};
+function handleDuplicateFieldsError(err: DuplicateError): BusinessLogicError {
+  const value = err.errmsg.match(/(["'])(\\?.)*?\1/)?.[0];
+  return new BusinessLogicError(
+    `Duplicate field value: ${value}. Please use another value`,
+  );
+}
 
-export { is404Handler, errorHandler as returnError };
+function handleValidationError(err: ValidationError): BusinessLogicError {
+  const errors = Object.values(err.errors).map((el) => el.message);
+  return new BusinessLogicError(`Invalid input data. ${errors.join('. ')}`);
+}
+
+export { handle404Error, handleError };
