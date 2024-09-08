@@ -1,4 +1,4 @@
-import { debounce, range } from './index';
+import { debounce, range } from '@/utils';
 
 describe('range function', () => {
   it('should generate a range of numbers', () => {

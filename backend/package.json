@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon",
     "eslint": "npx eslint . --ext .ts,.tsx --fix",
-    "test": "jest --bail"
+    "test": "jest"
   },
   "keywords": [],
   "author": "",

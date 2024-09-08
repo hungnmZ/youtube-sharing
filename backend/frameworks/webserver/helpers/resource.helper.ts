@@ -4,7 +4,7 @@ import { Api400Error } from '../utils/response/error.response';
 
 export const extractVideoId = (url: string) => {
   const regExp =
-    /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/)|youtu\.be\/)((\w|-){11})(?:\S+)?$/;
+    /^(?:https?:\/\/)?(?:(?:www|m)\.)?(?:youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})(?:[&?].*)?$/;
   const match = url.match(regExp);
   return match ? match[1] : null;
 };

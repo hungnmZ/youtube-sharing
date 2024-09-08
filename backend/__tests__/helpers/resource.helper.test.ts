@@ -9,36 +9,45 @@ jest.mock('googleapis');
 
 describe('Resource Helper', () => {
   describe('extractVideoId', () => {
-    it('should extract video ID from a valid YouTube URL', () => {
-      const url = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
-      expect(extractVideoId(url)).toBe('dQw4w9WgXcQ');
+    const validURLs = [
+      'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+      'https://youtu.be/dQw4w9WgXcQ',
+      'https://www.youtube.com/embed/dQw4w9WgXcQ',
+      'https://www.youtube.com/v/dQw4w9WgXcQ',
+      'https://www.youtube.com/shorts/dQw4w9WgXcQ',
+      'http://www.youtube.com/watch?v=dQw4w9WgXcQ',
+      'www.youtube.com/watch?v=dQw4w9WgXcQ',
+      'youtube.com/watch?v=dQw4w9WgXcQ',
+      'https://m.youtube.com/watch?v=dQw4w9WgXcQ',
+      'https://youtube.com/watch?v=dQw4w9WgXcQ&feature=share',
+    ];
+
+    const invalidURLs = [
+      'not a url',
+      'https://www.example.com',
+      'https://www.youtube.com',
+      'https://www.youtube.com/watch?v=',
+      'https://www.youtube.com/shorts/',
+      'https://www.youtube.com/feed/playlists',
+      'https://www.youtube.com/playlist?list=WL',
+      'https://www.youtube.com/playlist?list=PLHEH4RHwXsbcMkh0hbGdfXOKricGlkTRy&jct=096XU7r9wUAIG19jyVKxeiclIBskOw',
+      'https://youtu.be/ARnftey', // id length < 11
+      'https://youtu.be/ARnfsdqweqweqwe', // id length > 11
+      'https://www.youtube.com/shorts/ARnftey',
+      'https://www.youtube.com/shorts/ARnfsdqweqweqwe',
+      'https://www.youtube.com/channel/UCq-Fj5jknLsUf-MWSy4_brA',
+      'https://www.youtube.com/c/YouTubeCreators',
+      'https://www.youtube.com/user/YouTube',
+    ];
+
+    validURLs.forEach((url) => {
+      it(`should accept valid YouTube URL: ${url}`, () => {
+        expect(extractVideoId(url)).toBe('dQw4w9WgXcQ');
+      });
     });
 
-    it('should extract video ID from a valid YouTube short URL', () => {
-      const url = 'https://youtu.be/dQw4w9WgXcQ';
-      expect(extractVideoId(url)).toBe('dQw4w9WgXcQ');
-    });
-
-    it('should extract video ID from a valid YouTube embed URL', () => {
-      const url = 'https://www.youtube.com/embed/dQw4w9WgXcQ';
-      expect(extractVideoId(url)).toBe('dQw4w9WgXcQ');
-    });
-
-    it('should extract short video ID from a valid YouTube short video URL', () => {
-      const url = 'https://www.youtube.com/shorts/Ei4KP5uVtBg';
-      expect(extractVideoId(url)).toBe('Ei4KP5uVtBg');
-    });
-
-    it('should return null for an invalid YouTube URL', () => {
-      const urls = [
-        'https://www.example.com',
-        'https://www.youtube.com',
-        'https://www.youtube.com/watch?v=',
-        'https://www.youtube.com/feed/playlists',
-        'https://www.youtube.com/playlist?list=WL',
-        'https://www.youtube.com/playlist?list=PLHEH4RHwXsbcMkh0hbGdfXOKricGlkTRy&jct=096XU7r9wUAIG19jyVKxeiclIBskOw',
-      ];
-      urls.forEach((url) => {
+    invalidURLs.forEach((url) => {
+      it(`should reject invalid YouTube URL: ${url}`, () => {
         expect(extractVideoId(url)).toBeNull();
       });
     });

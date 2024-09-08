@@ -81,6 +81,7 @@ const SunMoon: React.FC = () => {
             r='1.5'
             fill='currentColor'
             variants={dotVariants}
+            data-testid='sun-ray'
           />
         ))}
       </g>

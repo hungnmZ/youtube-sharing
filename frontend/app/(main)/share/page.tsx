@@ -1,8 +1,7 @@
 import * as React from 'react';
 
 import HelloAnimation from '@/components/common/Icons/HelloAnimation';
-
-import ShareGroup from './_components/ShareGroup';
+import ShareGroup from '@/components/common/ShareGroup';
 
 const Home = async () => {
   return (
