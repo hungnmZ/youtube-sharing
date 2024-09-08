@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/unbound-method */
+import { IResourceSchema } from '@frameworks/database/mongodb/models/resource.model';
 import { ResourceController } from '@frameworks/webserver/controllers/resource.controller';
 import { ResourceService } from '@frameworks/webserver/services/resource.service';
 import { SocketService } from '@frameworks/webserver/services/socket.service';
@@ -16,9 +17,31 @@ describe('ResourceController', () => {
   let mockRequest: Partial<AuthenticatedRequest>;
   let mockResponse: Partial<Response>;
 
+  const mockResourceData: IResourceSchema = {
+    title: 'Test Resource',
+    description: 'Test Description',
+    channelTitle: 'Test Channel',
+    thumbnails: {
+      url: 'http://example.com/thumbnail.jpg',
+      width: 120,
+      height: 90,
+    },
+    statistics: {
+      viewCount: '100',
+      likeCount: '10',
+      dislikeCount: '1',
+      commentCount: '5',
+    },
+    sharedBy: {
+      userName: 'Test User',
+      userId: 'user123',
+    },
+  };
+
   beforeEach(() => {
     mockResourceService = {
       share: jest.fn(),
+      getAll: jest.fn(),
     } as unknown as jest.Mocked<ResourceService>;
 
     mockSocketService = {
@@ -36,6 +59,39 @@ describe('ResourceController', () => {
       json: jest.fn().mockReturnThis(),
       set: jest.fn().mockReturnThis(),
     };
+  });
+
+  describe('getAll', () => {
+    it('should successfully retrieve all resources', async () => {
+      const mockResources = [mockResourceData, { ...mockResourceData, _id: '2' }];
+      mockResourceService.getAll.mockResolvedValue(mockResources);
+
+      await resourceController.getAll(
+        mockRequest as AuthenticatedRequest,
+        mockResponse as Response,
+      );
+
+      expect(mockResourceService.getAll).toHaveBeenCalled();
+      expect(mockResponse.status).toHaveBeenCalledWith(200);
+      expect(mockResponse.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: 'OK',
+          status: 200,
+          data: mockResources,
+        }),
+      );
+    });
+
+    it('should handle errors when retrieving resources', async () => {
+      mockResourceService.getAll.mockRejectedValue(new Error('Database error'));
+
+      await expect(
+        resourceController.getAll(
+          mockRequest as AuthenticatedRequest,
+          mockResponse as Response,
+        ),
+      ).rejects.toThrow('Database error');
+    });
   });
 
   describe('share', () => {
@@ -71,7 +127,30 @@ describe('ResourceController', () => {
       );
     });
 
-    it('should throw an error for invalid YouTube URL', async () => {
+    it('should handle different YouTube URL formats', async () => {
+      const testCases = [
+        { url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', expectedId: 'dQw4w9WgXcQ' },
+        { url: 'https://youtu.be/dQw4w9WgXcQ', expectedId: 'dQw4w9WgXcQ' },
+        { url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', expectedId: 'dQw4w9WgXcQ' },
+      ];
+
+      for (const testCase of testCases) {
+        mockRequest.body = { url: testCase.url };
+        mockResourceService.share.mockResolvedValue(mockResourceData);
+
+        await resourceController.share(
+          mockRequest as AuthenticatedRequest,
+          mockResponse as Response,
+        );
+
+        expect(mockResourceService.share).toHaveBeenCalledWith(
+          testCase.expectedId,
+          'testUserId',
+        );
+      }
+    });
+
+    it('should throw Api400Error for invalid YouTube URL', async () => {
       mockRequest.body = { url: 'https://www.invalid-url.com' };
 
       await expect(
@@ -87,6 +166,40 @@ describe('ResourceController', () => {
           mockResponse as Response,
         ),
       ).rejects.toThrow('Please enter a valid YouTube video URL');
+    });
+
+    it('should handle missing auth information', async () => {
+      mockRequest.body = { url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' };
+      mockRequest.auth = undefined;
+
+      await expect(
+        resourceController.share(
+          mockRequest as AuthenticatedRequest,
+          mockResponse as Response,
+        ),
+      ).rejects.toThrow(BaseError);
+
+      await expect(
+        resourceController.share(
+          mockRequest as AuthenticatedRequest,
+          mockResponse as Response,
+        ),
+      ).rejects.toThrow('Unauthorized');
+    });
+
+    it('should handle errors from socketService', async () => {
+      mockRequest.body = { url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' };
+      mockResourceService.share.mockResolvedValue(mockResourceData);
+      mockSocketService.emitEvent.mockImplementation(() => {
+        throw new Error('Socket error');
+      });
+
+      await expect(
+        resourceController.share(
+          mockRequest as AuthenticatedRequest,
+          mockResponse as Response,
+        ),
+      ).rejects.toThrow('Socket error');
     });
 
     it('should handle errors from resourceService', async () => {
