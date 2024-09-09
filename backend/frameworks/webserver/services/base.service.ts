@@ -25,4 +25,8 @@ export abstract class BaseServices<Schema extends IBaseSchema>
   async delete(id: string): Promise<void> {
     await this.repo.delete(id);
   }
+  async paginate(limit: number, skip: number): Promise<Schema[]> {
+    const response = await this.repo.paginate(limit, skip);
+    return response;
+  }
 }

@@ -140,30 +140,39 @@ describe('ResourceService', () => {
   });
 
   describe('share', () => {
-    it('should share a resource successfully', async () => {
-      const videoId = 'testVideoId';
-      const userId = 'testUserId';
-      const mockVideoInfo = {
-        snippet: {
-          title: 'Test Video',
-          description: 'Test Description',
-          channelTitle: 'Test Channel',
-          thumbnails: {
-            maxres: { url: 'http://example.com/thumbnail.jpg', width: 1280, height: 720 },
-          },
+    const videoId = 'testVideoId';
+    const userId = 'testUserId';
+    const mockVideoInfo = {
+      snippet: {
+        title: 'Test Video',
+        description: 'Test Description',
+        channelTitle: 'Test Channel',
+        thumbnails: {
+          maxres: { url: 'http://example.com/thumbnail.jpg', width: 1280, height: 720 },
         },
-        statistics: {
-          viewCount: '100',
-          likeCount: '10',
-          dislikeCount: '1',
-          commentCount: '5',
-        },
-      };
-      const mockUser = { fullName: 'Test User', username: 'testuser' };
+      },
+      statistics: {
+        viewCount: '100',
+        likeCount: '10',
+        dislikeCount: '1',
+        commentCount: '5',
+      },
+    };
 
+    it('should successfully share a resource', async () => {
       (fetchYoutubeVideoInfo as jest.Mock).mockResolvedValue(mockVideoInfo);
-      (clerkClient.users.getUser as jest.Mock).mockResolvedValue(mockUser);
-      mockResourceRepo.create.mockResolvedValue(mockResourceData);
+      (clerkClient.users.getUser as jest.Mock).mockResolvedValue({
+        fullName: 'Test User',
+        username: 'testuser',
+      });
+      mockResourceRepo.create.mockResolvedValue({
+        sharedBy: { userName: 'Test User', userId },
+        title: mockVideoInfo.snippet.title,
+        description: mockVideoInfo.snippet.description,
+        channelTitle: mockVideoInfo.snippet.channelTitle,
+        thumbnails: mockVideoInfo.snippet.thumbnails.maxres,
+        statistics: mockVideoInfo.statistics,
+      });
 
       const result = await resourceService.share(videoId, userId);
 
@@ -174,75 +183,78 @@ describe('ResourceService', () => {
           title: 'Test Video',
           description: 'Test Description',
           channelTitle: 'Test Channel',
-          thumbnails: {
-            url: 'http://example.com/thumbnail.jpg',
-            width: 1280,
-            height: 720,
-          },
-          statistics: {
-            viewCount: '100',
-            likeCount: '10',
-            dislikeCount: '1',
-            commentCount: '5',
-          },
-          sharedBy: { userName: 'Test User', userId: 'testUserId' },
+          thumbnails: mockVideoInfo.snippet.thumbnails.maxres,
+          statistics: mockVideoInfo.statistics,
+          sharedBy: { userName: 'Test User', userId },
         }),
       );
-      expect(result).toEqual(mockResourceData);
+      expect(result).toEqual(
+        expect.objectContaining({
+          title: 'Test Video',
+          sharedBy: { userName: 'Test User', userId },
+        }),
+      );
     });
 
-    it('should throw error if video info fetch fails', async () => {
+    it('should throw Api400Error if video info is not found', async () => {
       (fetchYoutubeVideoInfo as jest.Mock).mockResolvedValue(null);
 
-      await expect(resourceService.share('invalidVideoId', 'userId')).rejects.toThrow(
+      await expect(resourceService.share(videoId, userId)).rejects.toThrow(BaseError);
+      await expect(resourceService.share(videoId, userId)).rejects.toThrow(
         'Video is private or does not exist',
-      );
-      await expect(resourceService.share('invalidVideoId', 'userId')).rejects.toThrow(
-        BaseError,
       );
     });
 
     it('should use username if fullName is not available', async () => {
-      const videoId = 'testVideoId';
-      const userId = 'testUserId';
-      const mockVideoInfo = {
-        snippet: {
-          title: 'Test Video',
-          description: 'Test Description',
-          channelTitle: 'Test Channel',
-          thumbnails: {
-            maxres: { url: 'http://example.com/thumbnail.jpg', width: 1280, height: 720 },
-          },
-        },
-        statistics: {
-          viewCount: '100',
-          likeCount: '10',
-          dislikeCount: '1',
-          commentCount: '5',
-        },
-      };
-      const mockUser = { fullName: null, username: 'testuser' };
-      const mockResource: IResourceSchema = {
+      (fetchYoutubeVideoInfo as jest.Mock).mockResolvedValue(mockVideoInfo);
+      (clerkClient.users.getUser as jest.Mock).mockResolvedValue({
+        fullName: null,
+        username: 'testuser',
+      });
+      mockResourceRepo.create.mockResolvedValue({
         title: 'Test Video',
         description: 'Test Description',
         channelTitle: 'Test Channel',
-        thumbnails: { url: 'http://example.com/thumbnail.jpg', width: 1280, height: 720 },
-        statistics: {
-          viewCount: '100',
-          likeCount: '10',
-          dislikeCount: '1',
-          commentCount: '5',
-        },
-        sharedBy: { userName: 'testuser', userId: 'testUserId' },
-      };
-
-      (fetchYoutubeVideoInfo as jest.Mock).mockResolvedValue(mockVideoInfo);
-      (clerkClient.users.getUser as jest.Mock).mockResolvedValue(mockUser);
-      mockResourceRepo.create.mockResolvedValue(mockResource);
+        thumbnails: mockVideoInfo.snippet.thumbnails.maxres,
+        statistics: mockVideoInfo.statistics,
+        sharedBy: { userName: 'testuser', userId },
+      });
 
       const result = await resourceService.share(videoId, userId);
 
       expect(result.sharedBy.userName).toBe('testuser');
+    });
+
+    it('should throw error if user information cannot be fetched', async () => {
+      (fetchYoutubeVideoInfo as jest.Mock).mockResolvedValue(mockVideoInfo);
+      (clerkClient.users.getUser as jest.Mock).mockRejectedValue(
+        new Error('User not found'),
+      );
+
+      await expect(resourceService.share(videoId, userId)).rejects.toThrow(
+        'User not found',
+      );
+    });
+  });
+
+  describe('paginate', () => {
+    it('should paginate resources', async () => {
+      const mockResources = [
+        mockResourceData,
+        { ...mockResourceData, title: 'Resource 2' },
+      ];
+      mockResourceRepo.paginate.mockResolvedValue(mockResources);
+
+      const result = await resourceService.paginate(10, 0);
+
+      expect(mockResourceRepo.paginate).toHaveBeenCalledWith(10, 0);
+      expect(result).toEqual(mockResources);
+    });
+
+    it('should throw an error if pagination fails', async () => {
+      mockResourceRepo.paginate.mockRejectedValue(new Error('Pagination failed'));
+
+      await expect(resourceService.paginate(10, 0)).rejects.toThrow('Pagination failed');
     });
   });
 });

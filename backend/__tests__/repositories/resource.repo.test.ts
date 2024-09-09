@@ -19,6 +19,7 @@ describe('ResourceRepo', () => {
       getById: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
+      paginate: jest.fn(),
     } as unknown as jest.Mocked<BaseRepo<IResourceSchema>>;
 
     (BaseRepo as jest.Mock).mockImplementation(() => mockBaseRepo);
@@ -174,6 +175,42 @@ describe('ResourceRepo', () => {
       mockBaseRepo.delete.mockRejectedValue(error);
 
       await expect(resourceRepo.delete('123')).rejects.toThrow('Deletion failed');
+    });
+  });
+
+  describe('paginate', () => {
+    it('should paginate resources', async () => {
+      const mockResources: IResourceSchema[] = [
+        {
+          title: 'Resource 1',
+          description: 'Description 1',
+          channelTitle: 'Channel 1',
+          thumbnails: { url: 'http://example.com/thumbnail1.jpg' },
+          statistics: { viewCount: '100', likeCount: '10' },
+          sharedBy: { userName: 'User 1', userId: 'user1' },
+        },
+        {
+          title: 'Resource 2',
+          description: 'Description 2',
+          channelTitle: 'Channel 2',
+          thumbnails: { url: 'http://example.com/thumbnail2.jpg' },
+          statistics: { viewCount: '200', likeCount: '20' },
+          sharedBy: { userName: 'User 2', userId: 'user2' },
+        },
+      ];
+      mockBaseRepo.paginate.mockResolvedValue(mockResources);
+
+      const result = await resourceRepo.paginate(10, 0);
+
+      expect(mockBaseRepo.paginate).toHaveBeenCalledWith(10, 0);
+      expect(result).toEqual(mockResources);
+    });
+
+    it('should throw an error if pagination fails', async () => {
+      const error = new Error('Pagination failed');
+      mockBaseRepo.paginate.mockRejectedValue(error);
+
+      await expect(resourceRepo.paginate(10, 0)).rejects.toThrow('Pagination failed');
     });
   });
 });

@@ -13,7 +13,7 @@ export abstract class BaseRepo<Schema extends IBaseSchema> implements IBaseRepo<
   }
 
   async getAll(): Promise<Schema[]> {
-    return this.model.find();
+    return this.model.find().sort({ createdAt: -1 });
   }
 
   async getById(id: string): Promise<Schema> {
@@ -26,5 +26,9 @@ export abstract class BaseRepo<Schema extends IBaseSchema> implements IBaseRepo<
 
   async delete(id: string): Promise<void> {
     await this.model.deleteOne({ _id: id });
+  }
+
+  async paginate(limit: number, skip: number): Promise<Schema[]> {
+    return this.model.find().skip(skip).limit(limit).sort({ createdAt: -1 });
   }
 }

@@ -9,6 +9,7 @@ class MockRepo implements IBaseRepo<IBaseSchema> {
   getById = jest.fn();
   update = jest.fn();
   delete = jest.fn();
+  paginate = jest.fn();
 }
 
 // Concrete implementation of BaseServices for testing
@@ -71,5 +72,15 @@ describe('BaseServices', () => {
     await service.delete('1');
 
     expect(mockRepo.delete).toHaveBeenCalledWith('1');
+  });
+
+  it('should paginate items', async () => {
+    const mockItems = [{ id: '1' }, { id: '2' }];
+    mockRepo.paginate.mockResolvedValue(mockItems);
+
+    const result = await service.paginate(10, 0);
+
+    expect(mockRepo.paginate).toHaveBeenCalledWith(10, 0);
+    expect(result).toEqual(mockItems);
   });
 });

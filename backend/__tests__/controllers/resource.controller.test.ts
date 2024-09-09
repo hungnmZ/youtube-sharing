@@ -42,6 +42,7 @@ describe('ResourceController', () => {
     mockResourceService = {
       share: jest.fn(),
       getAll: jest.fn(),
+      paginate: jest.fn(),
     } as unknown as jest.Mocked<ResourceService>;
 
     mockSocketService = {
@@ -212,6 +213,64 @@ describe('ResourceController', () => {
           mockResponse as Response,
         ),
       ).rejects.toThrow('Service error');
+    });
+  });
+
+  describe('paginate', () => {
+    it('should successfully paginate resources', async () => {
+      const mockPaginationDTO = { limit: 10, skip: 0 };
+      const mockResources = [mockResourceData, { ...mockResourceData, _id: '2' }];
+      mockResourceService.paginate.mockResolvedValue(mockResources);
+
+      mockRequest.body = mockPaginationDTO;
+
+      await resourceController.paginate(
+        mockRequest as AuthenticatedRequest,
+        mockResponse as Response,
+      );
+
+      expect(mockResourceService.paginate).toHaveBeenCalledWith(10, 0);
+      expect(mockResponse.status).toHaveBeenCalledWith(200);
+      expect(mockResponse.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: 'OK',
+          status: 200,
+          data: mockResources,
+        }),
+      );
+    });
+
+    it('should use default values if not provided', async () => {
+      const mockResources = [mockResourceData];
+      mockResourceService.paginate.mockResolvedValue(mockResources);
+
+      mockRequest.body = {};
+
+      await resourceController.paginate(
+        mockRequest as AuthenticatedRequest,
+        mockResponse as Response,
+      );
+
+      expect(mockResourceService.paginate).toHaveBeenCalledWith(10, 0);
+    });
+
+    it('should handle invalid pagination data', async () => {
+      const mockInvalidPaginationDTO = { limit: -1, skip: 'invalid' };
+      mockRequest.body = mockInvalidPaginationDTO;
+
+      await expect(
+        resourceController.paginate(
+          mockRequest as AuthenticatedRequest,
+          mockResponse as Response,
+        ),
+      ).rejects.toThrow(BaseError);
+
+      await expect(
+        resourceController.paginate(
+          mockRequest as AuthenticatedRequest,
+          mockResponse as Response,
+        ),
+      ).rejects.toThrow('Invalid pagination data');
     });
   });
 });

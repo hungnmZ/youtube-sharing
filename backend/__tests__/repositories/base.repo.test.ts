@@ -38,11 +38,13 @@ describe('BaseRepo', () => {
 
   it('should get all documents', async () => {
     const mockDocs = [{ id: '1' }, { id: '2' }];
-    MockModel.find.mockResolvedValue(mockDocs);
+    const mockSort = jest.fn().mockResolvedValue(mockDocs);
+    MockModel.find.mockReturnValue({ sort: mockSort });
 
     const result = await repo.getAll();
 
     expect(MockModel.find).toHaveBeenCalled();
+    expect(mockSort).toHaveBeenCalledWith({ createdAt: -1 });
     expect(result).toEqual(mockDocs);
   });
 
@@ -74,5 +76,25 @@ describe('BaseRepo', () => {
     await repo.delete('1');
 
     expect(MockModel.deleteOne).toHaveBeenCalledWith({ _id: '1' });
+  });
+
+  it('should paginate documents', async () => {
+    const mockDocs = [{ id: '1' }, { id: '2' }, { id: '3' }];
+    const mockSort = jest.fn().mockResolvedValue(mockDocs);
+    const mockLimit = jest.fn().mockReturnThis();
+    const mockSkip = jest.fn().mockReturnThis();
+    MockModel.find.mockReturnValue({
+      skip: mockSkip,
+      limit: mockLimit,
+      sort: mockSort,
+    });
+
+    const result = await repo.paginate(2, 1);
+
+    expect(MockModel.find).toHaveBeenCalled();
+    expect(mockSkip).toHaveBeenCalledWith(1);
+    expect(mockLimit).toHaveBeenCalledWith(2);
+    expect(mockSort).toHaveBeenCalledWith({ createdAt: -1 });
+    expect(result).toEqual(mockDocs);
   });
 });

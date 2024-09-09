@@ -1,8 +1,10 @@
 import { IResourceService } from '@application/services/IResource.serice';
 import { OK } from '@frameworks/webserver/utils/response/success.response';
+import { validate } from 'class-validator';
 import { Response } from 'express';
 import { AuthenticatedRequest } from 'types/request';
 
+import { PaginationDTO } from '../dtos/pagination.dto';
 import { ShareResourceDTO } from '../dtos/resource/shareResource.dto';
 import { extractVideoId } from '../helpers/resource.helper';
 import { SocketService } from '../services/socket.service';
@@ -16,6 +18,21 @@ export class ResourceController {
     this.resourceService = resourceService;
     this.socketService = socketService;
   }
+
+  paginate = async (req: AuthenticatedRequest, res: Response) => {
+    const paginationDTO = new PaginationDTO(req.body as PaginationDTO);
+    const errors = await validate(paginationDTO);
+    if (errors.length > 0) {
+      throw new Api400Error('Invalid pagination data', errors);
+    }
+
+    const resources = await this.resourceService.paginate(
+      paginationDTO.limit,
+      paginationDTO.skip,
+    );
+
+    OK({ res, data: resources });
+  };
 
   getAll = async (req: AuthenticatedRequest, res: Response) => {
     const resources = await this.resourceService.getAll();

@@ -14,6 +14,8 @@ export const resourceRouter = (socketService: SocketService): Router => {
 
   router.route('/').get(asyncAuthHandler(controller.getAll));
 
+  router.route('/paginate').post(asyncAuthHandler(controller.paginate));
+
   router.route('/share').post(asyncAuthHandler(controller.share));
 
   return router;

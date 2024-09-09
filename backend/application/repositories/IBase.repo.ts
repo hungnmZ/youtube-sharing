@@ -4,4 +4,5 @@ export interface IBaseRepo<T> {
   getById(id: string): Promise<T>;
   update(id: string, entity: Partial<T>): Promise<T>;
   delete(id: string): Promise<void>;
+  paginate(limit: number, skip: number): Promise<T[]>;
 }

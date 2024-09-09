@@ -26,7 +26,7 @@ export interface IResourceSchema extends IBaseSchema {
 const resourceSchema = new Schema<IResourceSchema>(
   {
     title: { type: String, required: true },
-    description: { type: String, required: true },
+    description: { type: String },
     channelTitle: { type: String, required: true },
     thumbnails: {
       url: String,
