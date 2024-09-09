@@ -7,7 +7,7 @@ import { Loader2Icon, Share2Icon } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { shareVideo } from '@/data/share';
+import { shareVideo } from '@/data/video';
 
 import Notification from '../Notification';
 

@@ -61,7 +61,11 @@ const SunMoon: React.FC = () => {
     >
       <mask id='moon-mask-main-nav'>
         <rect x='0' y='0' width='18' height='18' fill='#FFF'></rect>
-        <motion.circle variants={maskVariants} r='8' fill='black' />
+        <motion.circle
+          variants={maskVariants}
+          initial={{ cx: 0, cy: 0, r: 8 }}
+          fill='black'
+        />
       </mask>
       <motion.circle
         cx='9'

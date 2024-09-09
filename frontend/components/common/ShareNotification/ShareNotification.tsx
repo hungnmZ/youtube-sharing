@@ -20,8 +20,8 @@ const ShareNotification: React.FC<ShareNotificationProps> = (props) => {
   return (
     <div
       className={`${
-        toast.visible ? 'animate-enter' : 'animate-leave'
-      } pointer-events-auto flex w-full max-w-md rounded-lg bg-background/95 p-3 shadow-lg ring-1 ring-black ring-opacity-5 dark:border`}
+        toast.visible ? 'animate-in' : 'animate-out'
+      } pointer-events-auto flex w-full max-w-md rounded-lg bg-background/95 p-3 shadow-lg ring-1 ring-black ring-opacity-5 dark:ring-foreground/15`}
     >
       <div className='flex items-center justify-center'>
         <div className='flex h-full items-center bg-black'>

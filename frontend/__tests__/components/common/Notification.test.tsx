@@ -19,14 +19,14 @@ describe('Notification', () => {
 
   it('applies correct animation class when visible', () => {
     const { container } = render(<Notification {...mockProps} />);
-    expect(container.firstChild).toHaveClass('animate-enter');
+    expect(container.firstChild).toHaveClass('animate-in');
   });
 
   it('applies correct animation class when not visible', () => {
     const { container } = render(
       <Notification {...mockProps} toast={{ visible: false }} />,
     );
-    expect(container.firstChild).toHaveClass('animate-leave');
+    expect(container.firstChild).toHaveClass('animate-out');
   });
 
   it('renders success icon for success type', () => {

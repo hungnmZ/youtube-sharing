@@ -26,6 +26,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
             'min-h-dvh bg-background font-sans antialiased',
             fontSans.variable,
           )}
+          suppressHydrationWarning
         >
           <ThemeProvider>{children}</ThemeProvider>
         </body>

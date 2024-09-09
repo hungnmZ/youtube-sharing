@@ -27,14 +27,16 @@ const Header = () => {
             YouTube Sharing
           </Link>
         </div>
-        <div className='flex flex-1 justify-end gap-5'>
+        <div className='flex flex-1 items-center justify-end gap-5'>
           <Link href='/share'>
             <Button variant='outline' size='sm' className='gap-1'>
               Share a video
             </Button>
           </Link>
           <DarkModeToggle />
-          <UserButton />
+          <div className='h-7 w-7'>
+            <UserButton />
+          </div>
         </div>
       </div>
     </header>

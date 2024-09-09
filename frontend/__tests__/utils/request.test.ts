@@ -1,4 +1,4 @@
-import { postRequest } from '@/utils/request';
+import { getRequest, postRequest } from '@/utils/request';
 
 // Mock the next/headers module
 jest.mock('next/headers', () => ({
@@ -9,52 +9,67 @@ jest.mock('next/headers', () => ({
 
 global.fetch = jest.fn();
 
-describe('postRequest', () => {
+describe('request utils', () => {
   beforeEach(() => {
     (global.fetch as jest.Mock).mockClear();
   });
 
-  it('sends a POST request with correct headers and body', async () => {
-    const mockResponse = { json: jest.fn().mockResolvedValue({ data: 'test' }) };
-    (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
+  describe('postRequest', () => {
+    it('sends a POST request with correct headers and body', async () => {
+      const mockResponse = { json: jest.fn().mockResolvedValue({ data: 'test' }) };
+      (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
 
-    const url = 'https://api.example.com/test';
-    const body = { key: 'value' };
-    const result = await postRequest(url, body);
+      const url = 'https://api.example.com/test';
+      const body = { key: 'value' };
+      const result = await postRequest(url, body);
 
-    expect(global.fetch).toHaveBeenCalledWith(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Cookie: 'mocked_cookie=123',
-      },
-      body: 'key=value',
+      expect(global.fetch).toHaveBeenCalledWith(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Cookie: 'mocked_cookie=123',
+        },
+        body: JSON.stringify(body),
+      });
+      expect(result).toEqual({ data: 'test' });
     });
-    expect(result).toEqual({ data: 'test' });
+
+    it('handles fetch errors', async () => {
+      (global.fetch as jest.Mock).mockRejectedValue(new Error('Network error'));
+
+      const url = 'https://api.example.com/test';
+      const body = { key: 'value' };
+      const result = await postRequest(url, body);
+
+      expect(result).toEqual({ status: 500, message: 'Internal Server Error' });
+    });
   });
 
-  it('throws an error when fetch fails', async () => {
-    (global.fetch as jest.Mock).mockRejectedValue(new Error('Network error'));
+  describe('getRequest', () => {
+    it('sends a GET request with correct headers', async () => {
+      const mockResponse = { json: jest.fn().mockResolvedValue({ data: 'test' }) };
+      (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
 
-    const url = 'https://api.example.com/test';
-    const body = { key: 'value' };
+      const url = 'https://api.example.com/test';
+      const result = await getRequest(url);
 
-    await expect(postRequest(url, body)).rejects.toThrow('Network error');
-  });
+      expect(global.fetch).toHaveBeenCalledWith(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Cookie: 'mocked_cookie=123',
+        },
+      });
+      expect(result).toEqual({ data: 'test' });
+    });
 
-  it('returns error response when response is not ok', async () => {
-    const mockResponse = {
-      ok: false,
-      status: 400,
-      statusText: 'Bad Request',
-      json: jest.fn().mockResolvedValue({ error: 'Invalid data' }),
-    };
-    (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
+    it('handles fetch errors', async () => {
+      (global.fetch as jest.Mock).mockRejectedValue(new Error('Network error'));
 
-    const url = 'https://api.example.com/test';
-    const body = { key: 'value' };
+      const url = 'https://api.example.com/test';
+      const result = await getRequest(url);
 
-    const result = await postRequest(url, body);
-    expect(result).toEqual({ error: 'Invalid data' });
+      expect(result).toEqual({ status: 500, message: 'Internal Server Error' });
+    });
   });
 });

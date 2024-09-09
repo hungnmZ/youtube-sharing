@@ -37,14 +37,14 @@ describe('ShareNotification', () => {
 
   it('applies correct animation class when visible', () => {
     const { container } = render(<ShareNotification {...mockProps} />);
-    expect(container.firstChild).toHaveClass('animate-enter');
+    expect(container.firstChild).toHaveClass('animate-in');
   });
 
   it('applies correct animation class when not visible', () => {
     const { container } = render(
       <ShareNotification {...mockProps} toast={{ visible: false }} />,
     );
-    expect(container.firstChild).toHaveClass('animate-leave');
+    expect(container.firstChild).toHaveClass('animate-out');
   });
 
   it('uses default width and height for thumbnail when not provided', () => {

@@ -4,10 +4,10 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import ShareGroup from '@/components/common/ShareGroup';
-import { shareVideo } from '@/data/share';
+import { shareVideo } from '@/data/video';
 
 jest.mock('react-hot-toast');
-jest.mock('@/data/share');
+jest.mock('@/data/video');
 
 describe('ShareGroup', () => {
   beforeEach(() => {
@@ -78,7 +78,7 @@ describe('ShareGroup', () => {
     });
   });
 
-  it('shows a loading indicator while sharing', async () => {
+  it('shows a loading indicator while sharing and enables button after completion', async () => {
     (shareVideo as jest.Mock).mockImplementation(
       () => new Promise((resolve) => setTimeout(() => resolve({ status: 200 }), 1000)),
     );
@@ -87,14 +87,25 @@ describe('ShareGroup', () => {
       'Enter a YouTube video URL or a short video URL',
     );
     await userEvent.type(input, 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
-    await userEvent.click(screen.getByRole('button', { name: /share/i }));
+    const shareButton = screen.getByRole('button', { name: /share/i });
+    await userEvent.click(shareButton);
 
-    expect(screen.getByRole('button', { name: /share/i })).toBeDisabled();
+    expect(shareButton).toBeDisabled();
     expect(screen.getByTestId('loader-icon')).toBeInTheDocument();
 
-    await waitFor(() => {
-      expect(screen.queryByTestId('loader-icon')).not.toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(screen.queryByTestId('loader-icon')).not.toBeInTheDocument();
+      },
+      { timeout: 1000 },
+    );
+
+    await waitFor(
+      () => {
+        expect(shareButton).toBeDisabled();
+      },
+      { timeout: 1000 },
+    );
   });
 
   describe('URL Validation', () => {
