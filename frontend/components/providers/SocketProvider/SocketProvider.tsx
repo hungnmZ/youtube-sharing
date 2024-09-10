@@ -27,7 +27,7 @@ const SocketProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const { user } = useUser();
 
   useEffect(() => {
-    const newSocket = io(ENV_CONFIG.BACKEND_URL!);
+    const newSocket = io(ENV_CONFIG.BACKEND_URL_PUBLIC!);
     setSocket(newSocket);
 
     newSocket.on('connect', () => {

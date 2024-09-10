@@ -46,7 +46,8 @@ Before you begin, ensure you have the following installed:
       NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = pk_test_ZW1pbmVudC13ZWV2aWwtOTguY2xlcmsuYWNjb3VudHMuZGV2JA
       NEXT_PUBLIC_CLERK_SIGN_IN_URL = /sign-in
       NEXT_PUBLIC_CLERK_SIGN_UP_URL = /sign-up
-      NEXT_PUBLIC_BACKEND_URL = http://localhost:3000
+      NEXT_PUBLIC_BE_URL = http://localhost:3000
+      NEXT_PUBLIC_BE_URL_PUBLIC = http://localhost:3000
      ```
    - For the backend, create a `.env.local` file in the `backend` directory:
      ```

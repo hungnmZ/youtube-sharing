@@ -13,6 +13,7 @@ services:
       - NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
       - NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
       - NEXT_PUBLIC_BE_URL=http://backend:3000
+      - NEXT_PUBLIC_BE_URL_PUBLIC=http://20.189.78.196:3000
 
   backend:
     extends:
@@ -26,8 +27,8 @@ services:
       - YOUTUBE_API_KEY=AIzaSyAESmgbt33RF4al8K2hsTYlkHR1NptJefY
       - CLERK_SECRET_KEY=sk_test_8LYLbrOonMrPHWF35ntrajqIvoVUrClmIy7CUs2Sii
       - CLERK_PUBLISHABLE_KEY=pk_test_ZW1pbmVudC13ZWV2aWwtOTguY2xlcmsuYWNjb3VudHMuZGV2JA
-      - FRONTEND_URL=http://localhost:3006
-      - ORIGIN=http://localhost:3006
+      - FRONTEND_URL=http://20.189.78.196:3006
+      - ORIGIN=http://20.189.78.196:3006
 
   mongo:
     extends:
