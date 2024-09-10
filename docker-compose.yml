@@ -18,6 +18,8 @@ services:
     extends:
       file: ./backend/docker-compose.yml
       service: app
+    depends_on:
+      - mongo
     environment:
       - NODE_ENV=production
       - MONGO_URL=mongodb://mongo:27017/test
