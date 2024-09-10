@@ -4,6 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
+    "build": "tsc",
+    "start": "ts-node -r tsconfig-paths/register app.ts",
     "dev": "nodemon",
     "eslint": "npx eslint . --ext .ts,.tsx --fix",
     "test": "jest"

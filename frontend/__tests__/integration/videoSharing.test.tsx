@@ -7,7 +7,7 @@ import { io } from 'socket.io-client';
 
 import Home from '@/app/(main)/home/page';
 import SharePage from '@/app/(main)/share/page';
-import { SocketProvider } from '@/components/providers/SocketProvider';
+import SocketProvider from '@/components/providers/SocketProvider';
 import { getVideos, shareVideo } from '@/data/video';
 
 // Mock dependencies

@@ -22,7 +22,7 @@ export const useSocket = () => {
   return context;
 };
 
-export const SocketProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
+const SocketProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const { user } = useUser();
 
@@ -60,3 +60,5 @@ export const SocketProvider: React.FC<React.PropsWithChildren> = ({ children }) 
 
   return <SocketContext.Provider value={{ socket }}>{children}</SocketContext.Provider>;
 };
+
+export default SocketProvider;

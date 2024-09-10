@@ -3,7 +3,7 @@ import { toast } from 'react-hot-toast';
 import { act, render } from '@testing-library/react';
 import { io } from 'socket.io-client';
 
-import { SocketProvider } from '@/components/providers/SocketProvider';
+import SocketProvider from '@/components/providers/SocketProvider';
 import { ENV_CONFIG } from '@/constants/config';
 
 // Mock dependencies
