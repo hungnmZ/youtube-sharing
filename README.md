@@ -65,7 +65,7 @@ Before you begin, ensure you have the following installed:
 2. If you don't have any MongoDB instance, you can use the following command to start a MongoDB container:
 
    ```
-   docker run -d -p 27017:27017 --name youtube-video-sharing-mongo-1 mongo
+   docker run -d -p 27017:27017 --name youtube-sharing-mongo-1 mongo
    ```
 
 3. To seed the database with initial data, run:
