@@ -12,9 +12,7 @@ const VideoCardList: React.FC<VideoCardListProps> = ({ videos }) => {
   return (
     <div className='my-6 flex flex-col items-center justify-center gap-6'>
       {videos.map((video, index) => (
-        <div key={video._id} style={{ animationDelay: `${index * 100}ms` }}>
-          <VideoCard data={video} />
-        </div>
+        <VideoCard key={video._id} data={video} index={index} />
       ))}
     </div>
   );
