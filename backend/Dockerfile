@@ -1,14 +1,18 @@
 FROM node:20-alpine
 
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable && corepack prepare pnpm@9.10.0 --activate
+
 WORKDIR /usr/src/app
 
 COPY package.json pnpm-lock.yaml ./
 
-RUN corepack enable pnpm && pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-RUN corepack enable pnpm && pnpm run build
+RUN pnpm run build
 
 EXPOSE 3000
 
