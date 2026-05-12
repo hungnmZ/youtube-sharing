@@ -12,6 +12,7 @@ jest.mock('react-hot-toast');
 jest.mock('@/constants/config', () => ({
   ENV_CONFIG: {
     BACKEND_URL: 'http://test-backend-url.com',
+    BACKEND_URL_PUBLIC: 'http://test-backend-url.com',
   },
 }));
 jest.mock('@clerk/nextjs', () => ({
@@ -46,7 +47,7 @@ describe('SocketProvider', () => {
   it('initializes socket connection', () => {
     render(<SocketProvider>Test</SocketProvider>);
 
-    expect(io).toHaveBeenCalledWith(ENV_CONFIG.BACKEND_URL);
+    expect(io).toHaveBeenCalledWith(ENV_CONFIG.BACKEND_URL_PUBLIC);
     expect(mockOn).toHaveBeenCalledWith('connect', expect.any(Function));
     expect(mockOn).toHaveBeenCalledWith('disconnect', expect.any(Function));
     expect(mockOn).toHaveBeenCalledWith('resource:shared', expect.any(Function));

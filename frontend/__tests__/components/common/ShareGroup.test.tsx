@@ -1,6 +1,6 @@
 import React from 'react';
 import toast from 'react-hot-toast';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import ShareGroup from '@/components/common/ShareGroup';
@@ -79,8 +79,12 @@ describe('ShareGroup', () => {
   });
 
   it('shows a loading indicator while sharing and enables button after completion', async () => {
+    let resolveShare: (value: { status: number }) => void = () => {};
     (shareVideo as jest.Mock).mockImplementation(
-      () => new Promise((resolve) => setTimeout(() => resolve({ status: 200 }), 1000)),
+      () =>
+        new Promise((resolve) => {
+          resolveShare = resolve;
+        }),
     );
     render(<ShareGroup />);
     const input = screen.getByPlaceholderText(
@@ -93,19 +97,14 @@ describe('ShareGroup', () => {
     expect(shareButton).toBeDisabled();
     expect(screen.getByTestId('loader-icon')).toBeInTheDocument();
 
-    await waitFor(
-      () => {
-        expect(screen.queryByTestId('loader-icon')).not.toBeInTheDocument();
-      },
-      { timeout: 1000 },
-    );
+    await act(async () => {
+      resolveShare({ status: 200 });
+    });
 
-    await waitFor(
-      () => {
-        expect(shareButton).toBeDisabled();
-      },
-      { timeout: 1000 },
-    );
+    await waitFor(() => {
+      expect(screen.queryByTestId('loader-icon')).not.toBeInTheDocument();
+    });
+    expect(shareButton).toBeDisabled();
   });
 
   describe('URL Validation', () => {

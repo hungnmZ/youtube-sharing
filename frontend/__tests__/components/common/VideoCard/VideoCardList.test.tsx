@@ -6,8 +6,10 @@ import { VideoType } from '@/types/VideoType';
 
 jest.mock('@/components/common/VideoCard/VideoCard', () => ({
   __esModule: true,
-  default: ({ data }: { data: VideoType }) => (
-    <div data-testid={`video-card-${data._id}`}>{data.title}</div>
+  default: ({ data, index }: { data: VideoType; index: number }) => (
+    <div style={{ animationDelay: `${index * 100}ms` }}>
+      <div data-testid={`video-card-${data._id}`}>{data.title}</div>
+    </div>
   ),
 }));
 
