@@ -1,8 +1,8 @@
 services:
   frontend:
-    extends:
-      file: ./frontend/docker-compose.yml
-      service: app
+    image: manhung99/youtube-sharing-frontend:latest
+    ports:
+      - "3006:3006"
     depends_on:
       - backend
     environment:
@@ -16,9 +16,9 @@ services:
       - NEXT_PUBLIC_BE_URL_PUBLIC=http://109.237.70.69:3000
 
   backend:
-    extends:
-      file: ./backend/docker-compose.yml
-      service: app
+    image: manhung99/youtube-sharing-backend:latest
+    ports:
+      - "3000:3000"
     environment:
       - NODE_ENV=production
       - MONGO_URL=mongodb+srv://hungnm:hungnm@test.jboefj0.mongodb.net/?retryWrites=true&w=majority&appName=test
