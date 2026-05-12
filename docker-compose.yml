@@ -19,21 +19,11 @@ services:
     extends:
       file: ./backend/docker-compose.yml
       service: app
-    depends_on:
-      - mongo
     environment:
       - NODE_ENV=production
-      - MONGO_URL=mongodb://mongo:27017/test
+      - MONGO_URL=mongodb+srv://hungnm:hungnm@test.jboefj0.mongodb.net/?retryWrites=true&w=majority&appName=test
       - YOUTUBE_API_KEY=AIzaSyAESmgbt33RF4al8K2hsTYlkHR1NptJefY
       - CLERK_SECRET_KEY=sk_test_8LYLbrOonMrPHWF35ntrajqIvoVUrClmIy7CUs2Sii
       - CLERK_PUBLISHABLE_KEY=pk_test_ZW1pbmVudC13ZWV2aWwtOTguY2xlcmsuYWNjb3VudHMuZGV2JA
       - FRONTEND_URL=http://20.189.78.196:3006
       - ORIGIN=http://20.189.78.196:3006
-
-  mongo:
-    extends:
-      file: ./backend/docker-compose.yml
-      service: mongo
-
-volumes:
-  mongodb_data:

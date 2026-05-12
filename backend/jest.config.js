@@ -7,4 +7,6 @@ module.exports = {
     '^@config/(.*)$': '<rootDir>/config/$1',
     '^@frameworks/(.*)$': '<rootDir>/frameworks/$1',
   },
+  testPathIgnorePatterns: ['/node_modules/', '/dist/'],
+  modulePathIgnorePatterns: ['<rootDir>/dist/'],
 };

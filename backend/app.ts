@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-dotenv.config();
+dotenv.config({ path: '.env.local' });
 
 import { ENV_CONFIG } from '@config/env.config';
 import { expressConfig } from '@config/express.config';

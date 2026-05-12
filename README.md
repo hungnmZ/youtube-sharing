@@ -20,8 +20,7 @@ Before you begin, ensure you have the following installed:
 
 - Node.js (v20 or later) (recommended 20.9.0)
 - pnpm
-- Docker
-- MongoDB
+- Docker, only if you deploy with Docker
 
 ## Installation & Configuration
 
@@ -46,33 +45,20 @@ Before you begin, ensure you have the following installed:
       NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = pk_test_ZW1pbmVudC13ZWV2aWwtOTguY2xlcmsuYWNjb3VudHMuZGV2JA
       NEXT_PUBLIC_CLERK_SIGN_IN_URL = /sign-in
       NEXT_PUBLIC_CLERK_SIGN_UP_URL = /sign-up
-      NEXT_PUBLIC_BE_URL = http://localhost:3000
-      NEXT_PUBLIC_BE_URL_PUBLIC = http://localhost:3000
+      NEXT_PUBLIC_BE_URL = http://localhost:3001
+      NEXT_PUBLIC_BE_URL_PUBLIC = http://localhost:3001
      ```
    - For the backend, create a `.env.local` file in the `backend` directory:
      ```
       NODE_ENV = development
+      PORT = 3001
       CLERK_SECRET_KEY = sk_test_8LYLbrOonMrPHWF35ntrajqIvoVUrClmIy7CUs2Sii
       CLERK_PUBLISHABLE_KEY = pk_test_ZW1pbmVudC13ZWV2aWwtOTguY2xlcmsuYWNjb3VudHMuZGV2JA
       YOUTUBE_API_KEY = AIzaSyAESmgbt33RF4al8K2hsTYlkHR1NptJefY
       FRONTEND_URL = http://localhost:3006
       ORIGIN = http://localhost:3006
+      MONGO_URL = mongodb+srv://hungnm:hungnm@test.jboefj0.mongodb.net/?retryWrites=true&w=majority&appName=test
      ```
-
-## Database Setup
-
-1. Ensure MongoDB is running on your local machine or update the `MONGO_URL` in the backend `.env.local` file to point to your MongoDB instance.
-
-2. If you don't have any MongoDB instance, you can use the following command to start a MongoDB container:
-
-   ```
-   docker run -d -p 27017:27017 --name youtube-sharing-mongo-1 mongo
-   ```
-
-3. To seed the database with initial data, run:
-   ```
-   sh testData/script.sh
-   ```
 
 ## Running the Application
 
@@ -141,5 +127,5 @@ To deploy the application using Docker:
 
 - If you encounter CORS issues, ensure that the `ORIGIN` in the backend `.env.local` file matches your frontend URL.
 - Check that your YouTube API key is valid and has the necessary permissions.
-- For database connection issues, verify that MongoDB is running and the `MONGO_URL` is correct in the backend `.env.local` file.
+- For database connection issues, verify that the `MONGO_URL` in the backend `.env.local` file is correct.
 - If real-time updates are not working, check that the WebSocket connection is not being blocked by a firewall or proxy.
