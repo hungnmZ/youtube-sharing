@@ -7,6 +7,7 @@ jest.mock('googleapis', () => ({
 import {
   extractVideoId,
   fetchYoutubeVideoInfo,
+  getBestYoutubeThumbnail,
   normalizeYoutubeVideoUrl,
 } from '@frameworks/webserver/helpers/resource.helper';
 import { BaseError } from '@frameworks/webserver/utils/response/error.response';
@@ -72,6 +73,54 @@ describe('Resource Helper', () => {
       expect(
         normalizeYoutubeVideoUrl('https://www.youtube.com/playlist?list=WL'),
       ).toBeNull();
+    });
+  });
+
+  describe('getBestYoutubeThumbnail', () => {
+    it('should prefer maxres thumbnail when available', () => {
+      expect(
+        getBestYoutubeThumbnail({
+          high: {
+            url: 'https://example.com/high.jpg',
+            width: 480,
+            height: 360,
+          },
+          maxres: {
+            url: 'https://example.com/maxres.jpg',
+            width: 1280,
+            height: 720,
+          },
+        }),
+      ).toEqual({
+        url: 'https://example.com/maxres.jpg',
+        width: 1280,
+        height: 720,
+      });
+    });
+
+    it('should fall back to the best available thumbnail when maxres is missing', () => {
+      expect(
+        getBestYoutubeThumbnail({
+          default: {
+            url: 'https://example.com/default.jpg',
+            width: 120,
+            height: 90,
+          },
+          high: {
+            url: 'https://example.com/high.jpg',
+            width: 480,
+            height: 360,
+          },
+        }),
+      ).toEqual({
+        url: 'https://example.com/high.jpg',
+        width: 480,
+        height: 360,
+      });
+    });
+
+    it('should return an empty object when no thumbnail URL is available', () => {
+      expect(getBestYoutubeThumbnail({})).toEqual({});
     });
   });
 

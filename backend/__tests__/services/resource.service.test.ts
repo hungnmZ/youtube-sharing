@@ -14,7 +14,24 @@ jest.mock('@clerk/clerk-sdk-node', () => ({
     },
   },
 }));
-jest.mock('@frameworks/webserver/helpers/resource.helper');
+jest.mock('@frameworks/webserver/helpers/resource.helper', () => ({
+  fetchYoutubeVideoInfo: jest.fn(),
+  getBestYoutubeThumbnail: jest.fn((thumbnails) => {
+    const thumbnail = ['maxres', 'standard', 'high', 'medium', 'default']
+      .map((size) => thumbnails?.[size])
+      .find((thumbnail) => thumbnail?.url);
+
+    if (!thumbnail?.url) {
+      return {};
+    }
+
+    return {
+      url: thumbnail.url,
+      width: thumbnail.width ?? undefined,
+      height: thumbnail.height ?? undefined,
+    };
+  }),
+}));
 
 describe('ResourceService', () => {
   let resourceService: ResourceService;
@@ -192,6 +209,56 @@ describe('ResourceService', () => {
         expect.objectContaining({
           title: 'Test Video',
           sharedBy: { userName: 'Test User', userId },
+        }),
+      );
+    });
+
+    it('should use the best available thumbnail when maxres is missing', async () => {
+      const videoInfoWithoutMaxres = {
+        ...mockVideoInfo,
+        snippet: {
+          ...mockVideoInfo.snippet,
+          thumbnails: {
+            default: {
+              url: 'http://example.com/default.jpg',
+              width: 120,
+              height: 90,
+            },
+            high: {
+              url: 'http://example.com/high.jpg',
+              width: 480,
+              height: 360,
+            },
+          },
+        },
+      };
+      (fetchYoutubeVideoInfo as jest.Mock).mockResolvedValue(videoInfoWithoutMaxres);
+      (clerkClient.users.getUser as jest.Mock).mockResolvedValue({
+        fullName: 'Test User',
+        username: 'testuser',
+      });
+      mockResourceRepo.create.mockResolvedValue({
+        title: 'Test Video',
+        description: 'Test Description',
+        channelTitle: 'Test Channel',
+        thumbnails: {
+          url: 'http://example.com/high.jpg',
+          width: 480,
+          height: 360,
+        },
+        statistics: mockVideoInfo.statistics,
+        sharedBy: { userName: 'Test User', userId },
+      });
+
+      await resourceService.share(videoId, userId);
+
+      expect(mockResourceRepo.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          thumbnails: {
+            url: 'http://example.com/high.jpg',
+            width: 480,
+            height: 360,
+          },
         }),
       );
     });

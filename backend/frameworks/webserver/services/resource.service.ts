@@ -3,7 +3,10 @@ import { IResourceService } from '@application/services/IResource.serice';
 import { clerkClient } from '@clerk/clerk-sdk-node';
 import { IResourceSchema } from '@frameworks/database/mongodb/models/resource.model';
 
-import { fetchYoutubeVideoInfo } from '../helpers/resource.helper';
+import {
+  fetchYoutubeVideoInfo,
+  getBestYoutubeThumbnail,
+} from '../helpers/resource.helper';
 import { Api400Error } from '../utils/response/error.response';
 
 import { BaseServices } from './base.service';
@@ -28,7 +31,7 @@ export class ResourceService
       title: videoInfo.snippet?.title || '',
       description: videoInfo.snippet?.description || '',
       channelTitle: videoInfo.snippet?.channelTitle || '',
-      thumbnails: videoInfo.snippet?.thumbnails.maxres || {},
+      thumbnails: getBestYoutubeThumbnail(videoInfo.snippet?.thumbnails),
       statistics: videoInfo.statistics || {},
       sharedBy: {
         userName: fullName || username || '',
