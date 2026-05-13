@@ -9,6 +9,11 @@ export const extractVideoId = (url: string) => {
   return match ? match[1] : null;
 };
 
+export const normalizeYoutubeVideoUrl = (url: string) => {
+  const videoId = extractVideoId(url.trim());
+  return videoId ? `https://www.youtube.com/watch?v=${videoId}` : null;
+};
+
 export async function fetchYoutubeVideoInfo(videoId: string) {
   try {
     const youtube = google.youtube({

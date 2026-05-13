@@ -17,9 +17,15 @@ const ShareGroup = () => {
   const [errorMessage, setErrorMessage] = React.useState('');
 
   const handleShare = async () => {
+    const youtubeUrl = normalizeYoutubeVideoUrl(url);
+    if (!youtubeUrl) {
+      setErrorMessage('Please enter a valid YouTube video URL');
+      return;
+    }
+
     setIsLoading(true);
     try {
-      const data = await shareVideo(url);
+      const data = await shareVideo(youtubeUrl);
       if (data.status === 200) {
         toast.custom((t) => (
           <Notification
@@ -61,6 +67,11 @@ const ShareGroup = () => {
       /^(?:https?:\/\/)?(?:(?:www|m)\.)?(?:youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})(?:[&?].*)?$/;
     const match = url.match(regExp);
     return match ? match[1] : null;
+  };
+
+  const normalizeYoutubeVideoUrl = (url: string) => {
+    const videoId = extractVideoId(url.trim());
+    return videoId ? `https://www.youtube.com/watch?v=${videoId}` : null;
   };
 
   const handleOnKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

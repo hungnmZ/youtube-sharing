@@ -1,11 +1,16 @@
+jest.mock('googleapis', () => ({
+  google: {
+    youtube: jest.fn(),
+  },
+}));
+
 import {
   extractVideoId,
   fetchYoutubeVideoInfo,
+  normalizeYoutubeVideoUrl,
 } from '@frameworks/webserver/helpers/resource.helper';
 import { BaseError } from '@frameworks/webserver/utils/response/error.response';
 import { google } from 'googleapis';
-
-jest.mock('googleapis');
 
 describe('Resource Helper', () => {
   describe('extractVideoId', () => {
@@ -20,6 +25,7 @@ describe('Resource Helper', () => {
       'youtube.com/watch?v=dQw4w9WgXcQ',
       'https://m.youtube.com/watch?v=dQw4w9WgXcQ',
       'https://youtube.com/watch?v=dQw4w9WgXcQ&feature=share',
+      'https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=RDdQw4w9WgXcQ&start_radio=1',
     ];
 
     const invalidURLs = [
@@ -50,6 +56,22 @@ describe('Resource Helper', () => {
       it(`should reject invalid YouTube URL: ${url}`, () => {
         expect(extractVideoId(url)).toBeNull();
       });
+    });
+  });
+
+  describe('normalizeYoutubeVideoUrl', () => {
+    it('should normalize radio playlist URLs to a plain watch URL', () => {
+      expect(
+        normalizeYoutubeVideoUrl(
+          'https://www.youtube.com/watch?v=l1DC_UQzAIw&list=RDl1DC_UQzAIw&start_radio=1',
+        ),
+      ).toBe('https://www.youtube.com/watch?v=l1DC_UQzAIw');
+    });
+
+    it('should return null for invalid YouTube URLs', () => {
+      expect(
+        normalizeYoutubeVideoUrl('https://www.youtube.com/playlist?list=WL'),
+      ).toBeNull();
     });
   });
 

@@ -119,6 +119,7 @@ describe('ShareGroup', () => {
       'youtube.com/watch?v=dQw4w9WgXcQ',
       'https://m.youtube.com/watch?v=dQw4w9WgXcQ',
       'https://youtube.com/watch?v=dQw4w9WgXcQ&feature=share',
+      'https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=RDdQw4w9WgXcQ&start_radio=1',
     ];
 
     const invalidURLs = [
@@ -208,6 +209,26 @@ describe('ShareGroup', () => {
       );
       expect(input).toHaveValue('');
       expect(toast.custom).toHaveBeenCalledWith(expect.any(Function));
+    });
+  });
+
+  it('shares only the plain watch URL for YouTube radio playlist URLs', async () => {
+    (shareVideo as jest.Mock).mockResolvedValue({ status: 200 });
+    render(<ShareGroup />);
+    const input = screen.getByPlaceholderText(
+      'Enter a YouTube video URL or a short video URL',
+    );
+
+    await userEvent.type(
+      input,
+      'https://www.youtube.com/watch?v=l1DC_UQzAIw&list=RDl1DC_UQzAIw&start_radio=1',
+    );
+    await userEvent.click(screen.getByRole('button', { name: /share/i }));
+
+    await waitFor(() => {
+      expect(shareVideo).toHaveBeenCalledWith(
+        'https://www.youtube.com/watch?v=l1DC_UQzAIw',
+      );
     });
   });
 
