@@ -81,18 +81,18 @@ const ShareGroup = () => {
   };
 
   return (
-    <div className='space-y-2'>
-      <div className='flex gap-2'>
+    <div className='w-full max-w-xl space-y-2 px-4 sm:px-0'>
+      <div className='flex w-full flex-col gap-2 sm:flex-row'>
         <Input
           value={url}
           placeholder='Enter a YouTube video URL or a short video URL'
-          className='h-11 w-96'
+          className='h-11 min-w-0 flex-1'
           onChange={handleOnChange}
           onKeyDown={handleOnKeyDown}
         />
         <Button
           size='lg'
-          className='gap-1'
+          className='w-full gap-1 sm:w-auto'
           onClick={handleShare}
           disabled={isLoading || errorMessage !== '' || url === ''}
         >

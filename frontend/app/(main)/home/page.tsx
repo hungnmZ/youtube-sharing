@@ -14,7 +14,7 @@ const Home = async () => {
   }
 
   return (
-    <main>
+    <main className='w-full overflow-x-hidden'>
       <VideoCardList videos={videos.data as VideoType[]} />
       <LoadMore limit={limit} />
     </main>
